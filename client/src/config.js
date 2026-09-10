@@ -15,3 +15,8 @@ export const FORMATOS = [
   { valor: "ebook", rotulo: "E-book" },
   { valor: "audiobook", rotulo: "Audiobook" },
 ];
+
+export function rotulo(lista, valor) {
+  const item = lista.find((i) => i.valor === valor);
+  return item ? item.rotulo : valor;
+}

@@ -1,9 +1,4 @@
-import { FORMATOS, LITERATURAS } from "../config.js";
-
-function rotulo(lista, valor) {
-  const item = lista.find((i) => i.valor === valor);
-  return item ? item.rotulo : valor;
-}
+import { FORMATOS, LITERATURAS, rotulo } from "../config.js";
 
 function formatarData(iso) {
   if (!iso) return "";

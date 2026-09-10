@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import Cabecalho from "../components/Cabecalho.jsx";
 import { obterEstatisticas } from "../api/stats.js";
+import { FORMATOS, LITERATURAS, rotulo } from "../config.js";
 
-function Contagem({ titulo, dados, testid }) {
+function Contagem({ titulo, dados, testid, formatarChave }) {
   const itens = Object.entries(dados || {});
+  const rotularChave = formatarChave || ((chave) => chave);
   return (
     <div className="cartao" data-testid={testid}>
       <h3>{titulo}</h3>
@@ -13,7 +15,7 @@ function Contagem({ titulo, dados, testid }) {
         <ul>
           {itens.map(([chave, valor]) => (
             <li key={chave}>
-              {chave}: {valor}
+              {rotularChave(chave)}: {valor}
             </li>
           ))}
         </ul>
@@ -57,8 +59,18 @@ export default function Estatisticas() {
               <p className="numero">{stats.totalPaginasLidas}</p>
             </div>
             <Contagem titulo="Por gênero" dados={stats.porGenero} testid="stat-por-genero" />
-            <Contagem titulo="Por formato" dados={stats.porFormato} testid="stat-por-formato" />
-            <Contagem titulo="Por literatura" dados={stats.porLiteratura} testid="stat-por-literatura" />
+            <Contagem
+              titulo="Por formato"
+              dados={stats.porFormato}
+              testid="stat-por-formato"
+              formatarChave={(chave) => rotulo(FORMATOS, chave)}
+            />
+            <Contagem
+              titulo="Por literatura"
+              dados={stats.porLiteratura}
+              testid="stat-por-literatura"
+              formatarChave={(chave) => rotulo(LITERATURAS, chave)}
+            />
           </div>
         )}
       </main>
