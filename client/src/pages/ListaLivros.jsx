@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Cabecalho from "../components/Cabecalho.jsx";
 import Filtros from "../components/Filtros.jsx";
 import CardLivro from "../components/CardLivro.jsx";
@@ -25,17 +25,24 @@ export default function ListaLivros() {
   const [statusFixo, setStatusFixo] = useState(null);
 
   const [livroParaExcluir, setLivroParaExcluir] = useState(null);
+  const [excluindo, setExcluindo] = useState(false);
+
+  const requisicaoRef = useRef(0);
 
   const carregar = useCallback(async () => {
+    const requisicao = ++requisicaoRef.current;
     setCarregando(true);
     setErro("");
     try {
       const dados = await listarLivros({ status: aba, ...filtros });
+      if (requisicao !== requisicaoRef.current) return;
       setLivros(dados);
     } catch (e) {
+      if (requisicao !== requisicaoRef.current) return;
       setErro(e.message || "Não foi possível carregar os livros");
+      setLivros([]);
     } finally {
-      setCarregando(false);
+      if (requisicao === requisicaoRef.current) setCarregando(false);
     }
   }, [aba, filtros]);
 
@@ -78,6 +85,8 @@ export default function ListaLivros() {
   }
 
   async function confirmarExclusao() {
+    if (excluindo) return;
+    setExcluindo(true);
     try {
       await excluirLivro(livroParaExcluir.id);
       setLivroParaExcluir(null);
@@ -85,6 +94,8 @@ export default function ListaLivros() {
     } catch (e) {
       setErro(e.message || "Não foi possível excluir");
       setLivroParaExcluir(null);
+    } finally {
+      setExcluindo(false);
     }
   }
 
@@ -124,7 +135,7 @@ export default function ListaLivros() {
           </p>
         )}
         {carregando && <p data-testid="carregando">Carregando...</p>}
-        {!carregando && livros.length === 0 && (
+        {!carregando && !erro && livros.length === 0 && (
           <p data-testid="lista-vazia">Nenhum livro encontrado</p>
         )}
 
@@ -155,6 +166,7 @@ export default function ListaLivros() {
           mensagem={`Tem certeza que deseja excluir "${livroParaExcluir.title}"?`}
           aoConfirmar={confirmarExclusao}
           aoCancelar={() => setLivroParaExcluir(null)}
+          desabilitado={excluindo}
         />
       )}
     </div>

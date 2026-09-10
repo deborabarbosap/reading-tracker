@@ -1,4 +1,4 @@
-export default function ModalConfirmacao({ mensagem, aoConfirmar, aoCancelar }) {
+export default function ModalConfirmacao({ mensagem, aoConfirmar, aoCancelar, desabilitado }) {
   return (
     <div className="overlay" data-testid="modal-confirmacao">
       <div className="cartao">
@@ -8,6 +8,7 @@ export default function ModalConfirmacao({ mensagem, aoConfirmar, aoCancelar }) 
             type="button"
             className="perigo"
             onClick={aoConfirmar}
+            disabled={desabilitado}
             data-testid="botao-confirmar-exclusao"
           >
             Confirmar

@@ -29,6 +29,14 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
   const ehLido = dados.status === "lido";
   const ehEdicao = Boolean(livroInicial && livroInicial.id);
 
+  function ErroCampo({ campo }) {
+    return errosPorCampo[campo] ? (
+      <p className="erro" data-testid={`erro-campo-${campo}`}>
+        {errosPorCampo[campo]}
+      </p>
+    ) : null;
+  }
+
   function alterar(campo, valor) {
     setDados((d) => ({ ...d, [campo]: valor }));
   }
@@ -94,7 +102,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
             data-testid="input-titulo"
           />
         </label>
-        {errosPorCampo.title && <p className="erro">{errosPorCampo.title}</p>}
+        <ErroCampo campo="title" />
 
         <label>
           Autor
@@ -104,7 +112,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
             data-testid="input-autor"
           />
         </label>
-        {errosPorCampo.author && <p className="erro">{errosPorCampo.author}</p>}
+        <ErroCampo campo="author" />
 
         <label>
           Gênero
@@ -121,7 +129,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
             ))}
           </select>
         </label>
-        {errosPorCampo.genre && <p className="erro">{errosPorCampo.genre}</p>}
+        <ErroCampo campo="genre" />
 
         <label>
           Literatura
@@ -138,7 +146,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
             ))}
           </select>
         </label>
-        {errosPorCampo.literature && <p className="erro">{errosPorCampo.literature}</p>}
+        <ErroCampo campo="literature" />
 
         {ehLido && (
           <>
@@ -152,7 +160,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
                 data-testid="input-paginas"
               />
             </label>
-            {errosPorCampo.pages && <p className="erro">{errosPorCampo.pages}</p>}
+            <ErroCampo campo="pages" />
 
             <label>
               Formato
@@ -169,7 +177,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
                 ))}
               </select>
             </label>
-            {errosPorCampo.format && <p className="erro">{errosPorCampo.format}</p>}
+            <ErroCampo campo="format" />
 
             <label>
               Início da leitura
@@ -180,7 +188,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
                 data-testid="input-data-inicio"
               />
             </label>
-            {errosPorCampo.start_date && <p className="erro">{errosPorCampo.start_date}</p>}
+            <ErroCampo campo="start_date" />
 
             <label>
               Fim da leitura
@@ -191,7 +199,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
                 data-testid="input-data-fim"
               />
             </label>
-            {errosPorCampo.end_date && <p className="erro">{errosPorCampo.end_date}</p>}
+            <ErroCampo campo="end_date" />
           </>
         )}
 
