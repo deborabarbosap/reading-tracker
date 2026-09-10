@@ -25,6 +25,9 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
   const [errosPorCampo, setErrosPorCampo] = useState({});
   const [erroGeral, setErroGeral] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [arquivoCapa, setArquivoCapa] = useState(null);
+  const [removerCapaFlag, setRemoverCapaFlag] = useState(false);
+  const [erroCapa, setErroCapa] = useState("");
 
   const ehLido = dados.status === "lido";
   const ehEdicao = Boolean(livroInicial && livroInicial.id);
@@ -45,6 +48,7 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
     evento.preventDefault();
     setErrosPorCampo({});
     setErroGeral("");
+    setErroCapa("");
     setEnviando(true);
 
     const payload = {
@@ -62,14 +66,18 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
     }
 
     try {
-      await aoSalvar(payload);
+      await aoSalvar(payload, { arquivo: arquivoCapa, remover: removerCapaFlag });
     } catch (e) {
-      if (e.errors && e.errors.length > 0) {
+      if (e.capa) {
+        setErroCapa(e.message || "Não foi possível salvar a capa");
+      } else if (e.errors && e.errors.length > 0) {
         const mapa = {};
         for (const item of e.errors) mapa[item.field] = item.message;
         setErrosPorCampo(mapa);
+        setErroGeral(e.message || "Não foi possível salvar");
+      } else {
+        setErroGeral(e.message || "Não foi possível salvar");
       }
-      setErroGeral(e.message || "Não foi possível salvar");
     } finally {
       setEnviando(false);
     }
@@ -201,6 +209,52 @@ export default function FormularioLivro({ livroInicial, statusFixo, aoSalvar, ao
             </label>
             <ErroCampo campo="end_date" />
           </>
+        )}
+
+        <label>
+          Capa (opcional)
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={(e) => {
+              setArquivoCapa(e.target.files[0] || null);
+              setRemoverCapaFlag(false);
+              setErroCapa("");
+            }}
+            data-testid="input-capa"
+          />
+        </label>
+
+        {arquivoCapa && (
+          <img
+            className="preview-capa"
+            src={URL.createObjectURL(arquivoCapa)}
+            alt="Prévia da capa"
+            data-testid="preview-capa"
+          />
+        )}
+
+        {!arquivoCapa && livroInicial && livroInicial.cover_url && !removerCapaFlag && (
+          <div className="capa-atual" data-testid="capa-atual">
+            <img src={livroInicial.cover_url} alt="Capa atual" />
+            <button
+              type="button"
+              onClick={() => setRemoverCapaFlag(true)}
+              data-testid="botao-remover-capa"
+            >
+              Remover capa
+            </button>
+          </div>
+        )}
+
+        {removerCapaFlag && (
+          <p data-testid="capa-marcada-remover">A capa será removida ao salvar.</p>
+        )}
+
+        {erroCapa && (
+          <p className="erro" data-testid="erro-capa">
+            {erroCapa}
+          </p>
         )}
 
         {erroGeral && (
