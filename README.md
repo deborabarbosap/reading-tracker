@@ -55,7 +55,7 @@ Base: `/api`. Todas as rotas de livros e estatísticas exigem o header
 | Método | Rota | Descrição |
 |---|---|---|
 | POST | `/api/login` | `{ username, password }` → `{ token }` |
-| GET | `/api/books` | lista; filtros: `?status=&genre=&format=&literature=&search=` |
+| GET | `/api/books` | lista; filtros: `?status=&genre=&format=&literature=&search=`; ordenação (só com `status=lido`): `&sort=fim_desc` ou `&sort=fim_asc` (padrão: título) |
 | GET | `/api/books/:id` | um livro |
 | POST | `/api/books` | cria |
 | PUT | `/api/books/:id` | edita / move "quero ler" → "lido" |
@@ -68,7 +68,7 @@ Erros retornam JSON `{ "error": "..." }`; erros de validação incluem
 
 ## Valores fixos
 
-- **Gêneros:** Thriller Psicológico, Comédia Romântica, Distopia, Romance
+- **Gêneros:** Thriller Psicológico, Comédia Romântica, Distopia, Romance, Dark Romance
 - **Literatura:** `estrangeira`, `brasileira`
 - **Formato:** `fisico`, `ebook`, `audiobook`
 - **Status:** `quero_ler`, `lido`

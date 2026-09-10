@@ -5,8 +5,8 @@ const { validateBook } = require("../validation");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  const { status, genre, format, literature, search } = req.query;
-  res.json(repo.listBooks({ status, genre, format, literature, search }));
+  const { status, genre, format, literature, search, sort } = req.query;
+  res.json(repo.listBooks({ status, genre, format, literature, search, sort }));
 });
 
 router.get("/:id", (req, res) => {

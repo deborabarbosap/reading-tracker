@@ -123,6 +123,10 @@ label {
   margin-bottom: 1rem;
 }
 
+.ordenacao {
+  max-width: 320px;
+}
+
 .filtros {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

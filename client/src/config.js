@@ -3,6 +3,7 @@ export const GENEROS = [
   "Comédia Romântica",
   "Distopia",
   "Romance",
+  "Dark Romance",
 ];
 
 export const LITERATURAS = [

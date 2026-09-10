@@ -136,7 +136,7 @@ Uma única tabela `books` no SQLite.
 
 ### Valores fixos
 
-- **`genre`:** `Thriller Psicológico`, `Comédia Romântica`, `Distopia`, `Romance`
+- **`genre`:** `Thriller Psicológico`, `Comédia Romântica`, `Distopia`, `Romance`, `Dark Romance`
 - **`literature`:** `estrangeira`, `brasileira`
 - **`format`:** `fisico`, `ebook`, `audiobook`
 
@@ -176,7 +176,7 @@ Base: `/api`. Todas as respostas em JSON.
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/api/books` | Lista livros. Query params opcionais: `status`, `genre`, `format`, `literature`, `search` (casa com título ou autor, sem diferenciar maiúsculas). Filtros combinam com E. |
+| `GET` | `/api/books` | Lista livros. Query params opcionais: `status`, `genre`, `format`, `literature`, `search` (casa com título ou autor, sem diferenciar maiúsculas). Filtros combinam com E. Ordenação: por padrão por título; com `status=lido`, aceita `sort=fim_desc` (fim da leitura, mais recente primeiro) ou `sort=fim_asc` (mais antigo primeiro). |
 | `GET` | `/api/books/:id` | Um livro. `404` se não existir. |
 | `POST` | `/api/books` | Cria um livro. Valida as regras do `status`. `201` com o livro criado. |
 | `PUT` | `/api/books/:id` | Substitui os dados do livro. Também usado para mover "quero ler" → "lido". Valida as regras do `status` final. `404` se não existir. |

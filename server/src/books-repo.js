@@ -32,8 +32,18 @@ function listBooks(filters = {}) {
     params.literature = filters.literature;
   }
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+
+  // Ordenação: só a aba "Lido" pode ordenar por data de fim da leitura.
+  // Nos demais casos (inclusive "Quero ler", que não tem datas), ordena por título.
+  let orderBy = "title COLLATE NOCASE";
+  if (filters.status === "lido" && filters.sort === "fim_asc") {
+    orderBy = "end_date ASC, title COLLATE NOCASE";
+  } else if (filters.status === "lido" && filters.sort === "fim_desc") {
+    orderBy = "end_date DESC, title COLLATE NOCASE";
+  }
+
   const linhas = db
-    .prepare(`SELECT * FROM books ${where} ORDER BY title COLLATE NOCASE`)
+    .prepare(`SELECT * FROM books ${where} ORDER BY ${orderBy}`)
     .all(params);
 
   if (!filters.search) return linhas;

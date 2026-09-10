@@ -16,6 +16,7 @@ const FILTROS_VAZIOS = { search: "", genre: "", format: "", literature: "" };
 export default function ListaLivros() {
   const [aba, setAba] = useState("lido");
   const [filtros, setFiltros] = useState(FILTROS_VAZIOS);
+  const [ordenacao, setOrdenacao] = useState("fim_desc");
   const [livros, setLivros] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
@@ -34,7 +35,9 @@ export default function ListaLivros() {
     setCarregando(true);
     setErro("");
     try {
-      const dados = await listarLivros({ status: aba, ...filtros });
+      const criterios = { status: aba, ...filtros };
+      if (aba === "lido") criterios.sort = ordenacao;
+      const dados = await listarLivros(criterios);
       if (requisicao !== requisicaoRef.current) return;
       setLivros(dados);
     } catch (e) {
@@ -44,7 +47,7 @@ export default function ListaLivros() {
     } finally {
       if (requisicao === requisicaoRef.current) setCarregando(false);
     }
-  }, [aba, filtros]);
+  }, [aba, filtros, ordenacao]);
 
   useEffect(() => {
     carregar();
@@ -128,6 +131,20 @@ export default function ListaLivros() {
             Adicionar livro
           </button>
         </div>
+
+        {aba === "lido" && (
+          <label className="ordenacao">
+            Ordenar por
+            <select
+              value={ordenacao}
+              onChange={(e) => setOrdenacao(e.target.value)}
+              data-testid="select-ordenacao"
+            >
+              <option value="fim_desc">Fim da leitura: mais recentes</option>
+              <option value="fim_asc">Fim da leitura: mais antigos</option>
+            </select>
+          </label>
+        )}
 
         {erro && (
           <p className="erro" data-testid="erro-lista">
