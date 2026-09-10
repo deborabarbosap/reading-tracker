@@ -922,11 +922,10 @@ const booksRouter = require("./routes/books");
 app.use("/api/books", requireAuth, booksRouter);
 ```
 
-- [ ] **Step 3: Subir o servidor, resetar e definir um atalho de shell**
+- [ ] **Step 3: Subir o servidor e resetar**
 
 ```bash
 curl -s -X POST http://localhost:3001/api/test/reset
-export H='-H Authorization:Bearer token-de-teste-123 -H Content-Type:application/json'
 ```
 
 - [ ] **Step 4: Verificar listagem sem token**
@@ -936,20 +935,20 @@ Expected: `401`
 
 - [ ] **Step 5: Verificar listagem com token e filtro**
 
-Run: `curl -s $H "http://localhost:3001/api/books?status=lido&genre=Distopia" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).length))"`
+Run: `curl -s -H "Authorization: Bearer token-de-teste-123" -H "Content-Type: application/json" "http://localhost:3001/api/books?status=lido&genre=Distopia" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).length))"`
 Expected: `2`
 
 - [ ] **Step 6: Verificar criação inválida**
 
-Run: `curl -s -w "\n%{http_code}" $H -X POST http://localhost:3001/api/books -d '{"status":"quero_ler","title":"","author":"X","genre":"Romance","literature":"brasileira"}'`
+Run: `curl -s -w "\n%{http_code}" -H "Authorization: Bearer token-de-teste-123" -H "Content-Type: application/json" -X POST http://localhost:3001/api/books -d '{"status":"quero_ler","title":"","author":"X","genre":"Romance","literature":"brasileira"}'`
 Expected: corpo com `"errors"` contendo `"field":"title"`, e na última linha `400`.
 
 - [ ] **Step 7: Verificar criação válida + exclusão**
 
 ```bash
-curl -s $H -X POST http://localhost:3001/api/books -d '{"status":"quero_ler","title":"Novo","author":"X","genre":"Romance","literature":"brasileira"}'
+curl -s -H "Authorization: Bearer token-de-teste-123" -H "Content-Type: application/json" -X POST http://localhost:3001/api/books -d '{"status":"quero_ler","title":"Novo","author":"X","genre":"Romance","literature":"brasileira"}'
 # anotar o "id" retornado, e então:
-curl -s -o /dev/null -w "%{http_code}" $H -X DELETE http://localhost:3001/api/books/<id>
+curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer token-de-teste-123" -H "Content-Type: application/json" -X DELETE http://localhost:3001/api/books/<id>
 ```
 Expected: POST retorna `201` com o livro; DELETE retorna `204`.
 
@@ -957,7 +956,7 @@ Expected: POST retorna `201` com o livro; DELETE retorna `204`.
 
 ```bash
 # criar em quero_ler, anotar id, e mover:
-curl -s $H -X PUT http://localhost:3001/api/books/<id> -d '{"status":"lido","title":"Novo","author":"X","genre":"Romance","literature":"brasileira","pages":200,"format":"ebook","start_date":"2026-06-01","end_date":"2026-06-10"}'
+curl -s -H "Authorization: Bearer token-de-teste-123" -H "Content-Type: application/json" -X PUT http://localhost:3001/api/books/<id> -d '{"status":"lido","title":"Novo","author":"X","genre":"Romance","literature":"brasileira","pages":200,"format":"ebook","start_date":"2026-06-01","end_date":"2026-06-10"}'
 ```
 Expected: `200` com o livro atualizado, `status: "lido"` e `pages: 200`.
 
