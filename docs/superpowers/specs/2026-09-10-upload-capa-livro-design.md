@@ -1,7 +1,7 @@
 # Upload da Capa do Livro — Documento de Design
 
 **Data:** 2026-09-10
-**Status:** Aprovado (design)
+**Status:** Implementado
 **Projeto:** Rastreador de Leitura (spec base: `2026-09-10-rastreador-de-leitura-design.md`)
 
 ## 1. Objetivo
