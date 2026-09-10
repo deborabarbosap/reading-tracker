@@ -22,4 +22,9 @@ db.exec(`
   );
 `);
 
+const colunasBooks = db.prepare("PRAGMA table_info(books)").all().map((c) => c.name);
+if (!colunasBooks.includes("cover_file")) {
+  db.exec("ALTER TABLE books ADD COLUMN cover_file TEXT");
+}
+
 module.exports = db;
