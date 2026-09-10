@@ -31,13 +31,22 @@ function listBooks(filters = {}) {
     clauses.push("literature = @literature");
     params.literature = filters.literature;
   }
-  if (filters.search) {
-    clauses.push("(LOWER(title) LIKE @busca OR LOWER(author) LIKE @busca)");
-    params.busca = `%${String(filters.search).toLowerCase()}%`;
-  }
-
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
-  return db.prepare(`SELECT * FROM books ${where} ORDER BY title COLLATE NOCASE`).all(params);
+  const linhas = db
+    .prepare(`SELECT * FROM books ${where} ORDER BY title COLLATE NOCASE`)
+    .all(params);
+
+  if (!filters.search) return linhas;
+
+  // A busca por texto é feita em JS, não em SQL: o LOWER() do SQLite é só-ASCII
+  // (não dobra "COMÉDIA" -> "comédia") e "%"/"_" num LIKE agiriam como curingas.
+  // toLowerCase() do JS dobra acentos e includes() trata "%" e "_" como literais.
+  const termo = String(filters.search).toLowerCase();
+  return linhas.filter(
+    (livro) =>
+      String(livro.title).toLowerCase().includes(termo) ||
+      String(livro.author).toLowerCase().includes(termo)
+  );
 }
 
 function getBook(id) {
