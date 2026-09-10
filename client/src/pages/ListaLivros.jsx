@@ -9,6 +9,8 @@ import {
   criarLivro,
   atualizarLivro,
   excluirLivro,
+  enviarCapa,
+  removerCapa,
 } from "../api/livros.js";
 
 const FILTROS_VAZIOS = { search: "", genre: "", format: "", literature: "" };
@@ -77,12 +79,25 @@ export default function ListaLivros() {
     setStatusFixo(null);
   }
 
-  async function salvar(payload) {
-    if (livroEmEdicao && livroEmEdicao.id) {
-      await atualizarLivro(livroEmEdicao.id, payload);
-    } else {
-      await criarLivro(payload);
+  async function salvar(payload, capa = {}) {
+    const editando = Boolean(livroEmEdicao && livroEmEdicao.id);
+    const livro = editando
+      ? await atualizarLivro(livroEmEdicao.id, payload)
+      : await criarLivro(payload);
+
+    try {
+      if (capa.arquivo) {
+        await enviarCapa(livro.id, capa.arquivo);
+      } else if (capa.remover && editando) {
+        await removerCapa(livro.id);
+      }
+    } catch (e) {
+      await carregar();
+      const err = new Error(e.message || "Não foi possível salvar a capa");
+      err.capa = true;
+      throw err;
     }
+
     fecharForm();
     await carregar();
   }
@@ -164,6 +179,7 @@ export default function ListaLivros() {
               aoEditar={abrirEdicao}
               aoExcluir={setLivroParaExcluir}
               aoMarcarLido={abrirMarcarLido}
+              aoMudarCapa={carregar}
             />
           ))}
         </div>
