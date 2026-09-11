@@ -55,11 +55,14 @@ Base: `/api`. Todas as rotas de livros e estatísticas exigem o header
 | Método | Rota | Descrição |
 |---|---|---|
 | POST | `/api/login` | `{ username, password }` → `{ token }` |
-| GET | `/api/books` | lista; filtros: `?status=&genre=&format=&literature=&search=` |
+| GET | `/api/books` | lista; filtros: `?status=&genre=&format=&literature=&search=`; ordenação (só com `status=lido`): `&sort=fim_desc` ou `&sort=fim_asc` (padrão: título) |
 | GET | `/api/books/:id` | um livro |
 | POST | `/api/books` | cria |
 | PUT | `/api/books/:id` | edita / move "quero ler" → "lido" |
 | DELETE | `/api/books/:id` | exclui |
+| POST | `/api/books/:id/book-cover` | envia/troca a capa (`multipart/form-data`, campo `cover`; PNG/JPEG/WEBP, ≤ 2 MB) |
+| DELETE | `/api/books/:id/book-cover` | remove a capa |
+| GET | `/uploads/<arquivo>` | serve a imagem da capa (sem token) |
 | GET | `/api/stats` | totais e contagens |
 | POST | `/api/test/reset` | reseta os dados (sem token) |
 
@@ -68,13 +71,24 @@ Erros retornam JSON `{ "error": "..." }`; erros de validação incluem
 
 ## Valores fixos
 
-- **Gêneros:** Thriller Psicológico, Comédia Romântica, Distopia, Romance
+- **Gêneros:** Thriller Psicológico, Comédia Romântica, Distopia, Romance, Dark Romance
 - **Literatura:** `estrangeira`, `brasileira`
 - **Formato:** `fisico`, `ebook`, `audiobook`
 - **Status:** `quero_ler`, `lido`
 
 Campos obrigatórios em "quero ler": título, autor, gênero, literatura.
 Em "lido": todos os anteriores + páginas, formato, data de início e data de fim.
+
+## Capas dos livros
+
+A capa é opcional. É enviada pelo formulário de livro ou pelo atalho no
+card (Adicionar / Trocar / Remover capa). Os arquivos ficam em
+`server/uploads/` (fora do git, criada em runtime) e são servidos em
+`/uploads/<arquivo>`. Formatos: PNG, JPEG, WEBP; máximo 2 MB.
+
+`POST /api/test/reset` esvazia `server/uploads/` e recria os 8 livros com
+3 capas de exemplo (livros "A Garota no Trem", "1984", "Torto Arado"),
+usando as imagens versionadas em `server/seed-assets/`.
 
 ## Estrutura
 
@@ -90,7 +104,10 @@ Todos os elementos interativos têm `data-testid` em português. Exemplos:
 `botao-adicionar-livro`, `input-busca`, `select-genero`, `card-livro-<id>`,
 `botao-editar-<id>`, `botao-excluir-<id>`, `botao-marcar-lido-<id>`,
 `form-livro`, `input-titulo`, `botao-salvar-livro`, `modal-confirmacao`,
-`botao-confirmar-exclusao`, `stat-total-lidos`.
+`botao-confirmar-exclusao`, `stat-total-lidos`, `select-ordenacao`,
+`input-capa`, `preview-capa`, `botao-remover-capa`, `erro-capa`,
+`capa-livro-<id>`, `capa-placeholder-<id>`, `botao-adicionar-capa-<id>`,
+`botao-trocar-capa-<id>`.
 
 ## Testes
 

@@ -1,6 +1,7 @@
 node_modules/
 dist/
 scratch/
+server/uploads/
 server/data.sqlite
 server/data.sqlite-journal
 server/data.sqlite-wal

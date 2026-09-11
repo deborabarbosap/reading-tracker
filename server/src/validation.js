@@ -1,4 +1,4 @@
-const GENRES = ["Thriller Psicológico", "Comédia Romântica", "Distopia", "Romance"];
+const GENRES = ["Thriller Psicológico", "Comédia Romântica", "Distopia", "Romance", "Dark Romance"];
 const LITERATURES = ["estrangeira", "brasileira"];
 const FORMATS = ["fisico", "ebook", "audiobook"];
 const STATUSES = ["quero_ler", "lido"];

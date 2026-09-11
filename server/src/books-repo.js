@@ -1,5 +1,13 @@
 const db = require("./db");
 
+function serializeBook(row) {
+  if (!row) return row;
+  return {
+    ...row,
+    cover_url: row.cover_file ? `/uploads/${row.cover_file}` : null,
+  };
+}
+
 const COLUNAS = `
   status, title, author, genre, literature,
   pages, format, start_date, end_date,
@@ -32,25 +40,37 @@ function listBooks(filters = {}) {
     params.literature = filters.literature;
   }
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+
+  // Ordenação: só a aba "Lido" pode ordenar por data de fim da leitura.
+  // Nos demais casos (inclusive "Quero ler", que não tem datas), ordena por título.
+  let orderBy = "title COLLATE NOCASE";
+  if (filters.status === "lido" && filters.sort === "fim_asc") {
+    orderBy = "end_date ASC, title COLLATE NOCASE";
+  } else if (filters.status === "lido" && filters.sort === "fim_desc") {
+    orderBy = "end_date DESC, title COLLATE NOCASE";
+  }
+
   const linhas = db
-    .prepare(`SELECT * FROM books ${where} ORDER BY title COLLATE NOCASE`)
+    .prepare(`SELECT * FROM books ${where} ORDER BY ${orderBy}`)
     .all(params);
 
-  if (!filters.search) return linhas;
+  if (!filters.search) return linhas.map(serializeBook);
 
   // A busca por texto é feita em JS, não em SQL: o LOWER() do SQLite é só-ASCII
   // (não dobra "COMÉDIA" -> "comédia") e "%"/"_" num LIKE agiriam como curingas.
   // toLowerCase() do JS dobra acentos e includes() trata "%" e "_" como literais.
   const termo = String(filters.search).toLowerCase();
-  return linhas.filter(
-    (livro) =>
-      String(livro.title).toLowerCase().includes(termo) ||
-      String(livro.author).toLowerCase().includes(termo)
-  );
+  return linhas
+    .filter(
+      (livro) =>
+        String(livro.title).toLowerCase().includes(termo) ||
+        String(livro.author).toLowerCase().includes(termo)
+    )
+    .map(serializeBook);
 }
 
 function getBook(id) {
-  return db.prepare("SELECT * FROM books WHERE id = ?").get(id);
+  return serializeBook(db.prepare("SELECT * FROM books WHERE id = ?").get(id));
 }
 
 function linhaCompleta(value, timestamps) {
@@ -115,7 +135,29 @@ function insertSeed(books) {
   return books.length;
 }
 
+function setBookCover(id, filename) {
+  const existe = db.prepare("SELECT id FROM books WHERE id = ?").get(id);
+  if (!existe) return undefined;
+  db.prepare("UPDATE books SET cover_file = @f, updated_at = @u WHERE id = @id").run({
+    f: filename,
+    u: new Date().toISOString(),
+    id,
+  });
+  return getBook(id);
+}
+
+function clearBookCover(id) {
+  const existe = db.prepare("SELECT id FROM books WHERE id = ?").get(id);
+  if (!existe) return undefined;
+  db.prepare("UPDATE books SET cover_file = NULL, updated_at = @u WHERE id = @id").run({
+    u: new Date().toISOString(),
+    id,
+  });
+  return getBook(id);
+}
+
 module.exports = {
+  serializeBook,
   listBooks,
   getBook,
   createBook,
@@ -123,4 +165,6 @@ module.exports = {
   deleteBook,
   deleteAllBooks,
   insertSeed,
+  setBookCover,
+  clearBookCover,
 };

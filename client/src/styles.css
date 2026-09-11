@@ -123,6 +123,10 @@ label {
   margin-bottom: 1rem;
 }
 
+.ordenacao {
+  max-width: 320px;
+}
+
 .filtros {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -197,4 +201,48 @@ label {
   font-size: 2rem;
   font-weight: 700;
   margin: 0.25rem 0 0;
+}
+
+.card-livro-conteudo {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.card-livro-dados {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-livro-capa img,
+.card-livro-capa .capa-placeholder {
+  width: 90px;
+  height: 135px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--cor-borda);
+  flex-shrink: 0;
+}
+
+.card-livro-capa .capa-placeholder {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #71717a;
+  background: #f4f4f5;
+}
+
+.preview-capa,
+.capa-atual img {
+  max-width: 120px;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--cor-borda);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.capa-atual {
+  margin-bottom: 0.75rem;
 }

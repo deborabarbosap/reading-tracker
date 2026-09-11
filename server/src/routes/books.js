@@ -1,12 +1,13 @@
 const express = require("express");
 const repo = require("../books-repo");
+const coverStorage = require("../cover-storage");
 const { validateBook } = require("../validation");
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  const { status, genre, format, literature, search } = req.query;
-  res.json(repo.listBooks({ status, genre, format, literature, search }));
+  const { status, genre, format, literature, search, sort } = req.query;
+  res.json(repo.listBooks({ status, genre, format, literature, search, sort }));
 });
 
 router.get("/:id", (req, res) => {
@@ -34,8 +35,11 @@ router.put("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  const removido = repo.deleteBook(Number(req.params.id));
+  const id = Number(req.params.id);
+  const livro = repo.getBook(id);
+  const removido = repo.deleteBook(id);
   if (!removido) return res.status(404).json({ error: "Livro não encontrado" });
+  if (livro && livro.cover_file) coverStorage.apagarCapa(livro.cover_file);
   res.status(204).end();
 });
 
