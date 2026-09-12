@@ -136,7 +136,7 @@ Uma única tabela `books` no SQLite.
 
 ### Valores fixos
 
-- **`genre`:** `Thriller Psicológico`, `Comédia Romântica`, `Distopia`, `Romance`, `Dark Romance`
+- **`genre`:** `Thriller Psicológico`, `Comédia Romântica`, `Distopia`, `Romance`, `Dark Romance`, `Suspense`
 - **`literature`:** `estrangeira`, `brasileira`
 - **`format`:** `fisico`, `ebook`, `audiobook`
 

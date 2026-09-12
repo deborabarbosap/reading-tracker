@@ -4,6 +4,7 @@ export const GENEROS = [
   "Distopia",
   "Romance",
   "Dark Romance",
+  "Suspense",
 ];
 
 export const LITERATURAS = [

@@ -71,7 +71,7 @@ Erros retornam JSON `{ "error": "..." }`; erros de validação incluem
 
 ## Valores fixos
 
-- **Gêneros:** Thriller Psicológico, Comédia Romântica, Distopia, Romance, Dark Romance
+- **Gêneros:** Thriller Psicológico, Comédia Romântica, Distopia, Romance, Dark Romance, Suspense
 - **Literatura:** `estrangeira`, `brasileira`
 - **Formato:** `fisico`, `ebook`, `audiobook`
 - **Status:** `quero_ler`, `lido`
