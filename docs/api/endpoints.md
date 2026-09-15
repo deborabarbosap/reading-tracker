@@ -24,6 +24,14 @@ Autentica e devolve o token fixo.
 - **Resposta (401):** `{ "error": "Usuário ou senha inválidos" }` quando
   usuário/senha não conferem.
 
+**Exemplo:**
+
+```bash
+curl -X POST http://localhost:3001/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "admin123"}'
+```
+
 ## GET /api/books
 
 Lista livros, com filtros opcionais via query string.
@@ -38,6 +46,13 @@ Lista livros, com filtros opcionais via query string.
     `status=lido` (ordena por `end_date`). Sem esse combo, a lista é
     ordenada por título.
 - **Resposta (200):** array de livros (ver formato do livro abaixo).
+
+**Exemplo:**
+
+```bash
+curl "http://localhost:3001/api/books?status=lido&sort=fim_desc" \
+  -H "Authorization: Bearer token-de-teste-123"
+```
 
 ## GET /api/books/:id
 
@@ -70,15 +85,57 @@ Retorna um livro específico.
 
 `cover_file`/`cover_url` são `null` quando o livro não tem capa.
 
+**Exemplo:**
+
+```bash
+curl http://localhost:3001/api/books/1 \
+  -H "Authorization: Bearer token-de-teste-123"
+```
+
 ## POST /api/books
 
 Cria um livro.
 
 - **Autenticação:** obrigatória.
-- **Payload:** campos do livro (ver regras de negócio para obrigatoriedade
-  por status).
+- **Payload:** campos do livro — ver tabela abaixo.
 - **Resposta (201):** livro criado.
 - **Resposta (400):** validação falhou — `{ "error", "errors": [...] }`.
+
+**Exemplo:**
+
+```bash
+curl -X POST http://localhost:3001/api/books \
+  -H "Authorization: Bearer token-de-teste-123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "lido",
+    "title": "1984",
+    "author": "George Orwell",
+    "genre": "Distopia",
+    "literature": "estrangeira",
+    "pages": 416,
+    "format": "ebook",
+    "start_date": "2026-02-01",
+    "end_date": "2026-02-18"
+  }'
+```
+
+**Campos do livro** (valem para `POST` e `PUT`):
+
+| Campo | Obrigatório | Valores aceitos |
+|---|---|---|
+| `status` | sempre | `quero_ler`, `lido` |
+| `title` | sempre | texto não vazio |
+| `author` | sempre | texto não vazio |
+| `genre` | sempre | `Thriller Psicológico`, `Comédia Romântica`, `Distopia`, `Romance`, `Dark Romance`, `Suspense` |
+| `literature` | sempre | `estrangeira`, `brasileira` |
+| `pages` | só quando `status = "lido"` | número inteiro maior que zero |
+| `format` | só quando `status = "lido"` | `fisico`, `ebook`, `audiobook` |
+| `start_date` | só quando `status = "lido"` | data `YYYY-MM-DD` |
+| `end_date` | só quando `status = "lido"` | data `YYYY-MM-DD`, não anterior a `start_date` |
+
+Detalhes e o "porquê" de cada regra:
+[`docs/requirements/business-rules.md`](../requirements/business-rules.md).
 
 ## PUT /api/books/:id
 
@@ -86,10 +143,29 @@ Edita um livro — inclusive a transição de "quero ler" para "lido" (basta
 enviar o novo `status` junto com os campos que passam a ser obrigatórios).
 
 - **Autenticação:** obrigatória.
-- **Payload:** mesmas regras de `POST`.
+- **Payload:** mesmos campos e regras de `POST` (ver tabela acima).
 - **Resposta (200):** livro atualizado.
 - **Resposta (400):** validação falhou.
 - **Resposta (404):** livro não encontrado.
+
+**Exemplo** (movendo "O Conto da Aia" de "quero ler" para "lido"):
+
+```bash
+curl -X PUT http://localhost:3001/api/books/6 \
+  -H "Authorization: Bearer token-de-teste-123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "lido",
+    "title": "O Conto da Aia",
+    "author": "Margaret Atwood",
+    "genre": "Distopia",
+    "literature": "estrangeira",
+    "pages": 412,
+    "format": "fisico",
+    "start_date": "2026-06-01",
+    "end_date": "2026-06-20"
+  }'
+```
 
 ## DELETE /api/books/:id
 
@@ -99,6 +175,13 @@ apagado do disco.
 - **Autenticação:** obrigatória.
 - **Resposta (204):** sem corpo.
 - **Resposta (404):** `{ "error": "Livro não encontrado" }`.
+
+**Exemplo:**
+
+```bash
+curl -X DELETE http://localhost:3001/api/books/1 \
+  -H "Authorization: Bearer token-de-teste-123"
+```
 
 ## POST /api/books/:id/book-cover
 
@@ -117,6 +200,14 @@ Envia ou troca a capa de um livro.
   (arquivo grande demais).
 - **Resposta (404):** livro não encontrado.
 
+**Exemplo:**
+
+```bash
+curl -X POST http://localhost:3001/api/books/1/book-cover \
+  -H "Authorization: Bearer token-de-teste-123" \
+  -F "cover=@caminho/para/capa.png"
+```
+
 ## DELETE /api/books/:id/book-cover
 
 Remove a capa de um livro (o livro continua existindo, só sem capa).
@@ -126,6 +217,13 @@ Remove a capa de um livro (o livro continua existindo, só sem capa).
   `null`).
 - **Resposta (404):** livro não encontrado.
 
+**Exemplo:**
+
+```bash
+curl -X DELETE http://localhost:3001/api/books/1/book-cover \
+  -H "Authorization: Bearer token-de-teste-123"
+```
+
 ## GET /uploads/:arquivo
 
 Serve o arquivo de imagem da capa (estático, via `express.static`).
@@ -133,10 +231,15 @@ Serve o arquivo de imagem da capa (estático, via `express.static`).
 - **Autenticação:** nenhuma (rota pública, de propósito — é só uma
   imagem).
 
+**Exemplo** (`cover_file` retornado por outro endpoint):
+
+```bash
+curl http://localhost:3001/uploads/1-1234567890.png -o capa.png
+```
+
 ## GET /api/stats
 
-Totais e contagens (ver regras de negócio para o que entra em cada
-campo).
+Totais e contagens da biblioteca.
 
 - **Autenticação:** obrigatória.
 - **Resposta (200):**
@@ -152,6 +255,25 @@ campo).
 }
 ```
 
+**Campos da resposta** (todos calculados só sobre livros com
+`status = "lido"`, exceto `totalQueroLer`):
+
+| Campo | O que é |
+|---|---|
+| `totalLidos` | quantidade de livros com `status = "lido"` |
+| `totalQueroLer` | quantidade de livros com `status = "quero_ler"` — não entra nos demais campos |
+| `totalPaginasLidas` | soma de `pages` de todos os livros lidos |
+| `porGenero` | contagem de livros lidos, agrupada por `genre` |
+| `porFormato` | contagem de livros lidos, agrupada por `format` |
+| `porLiteratura` | contagem de livros lidos, agrupada por `literature` |
+
+**Exemplo:**
+
+```bash
+curl http://localhost:3001/api/stats \
+  -H "Authorization: Bearer token-de-teste-123"
+```
+
 ## POST /api/test/reset
 
 Reseta o banco para um estado conhecido — pensado para uso em testes
@@ -163,3 +285,9 @@ automatizados/manuais, não para uso normal da aplicação.
   (`server/seed-assets/`) aos livros "A Garota no Trem", "1984" e "Torto
   Arado".
 - **Resposta (200):** `{ "ok": true, "inseridos": 8 }`.
+
+**Exemplo:**
+
+```bash
+curl -X POST http://localhost:3001/api/test/reset
+```
