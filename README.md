@@ -1,21 +1,99 @@
-# Rastreador de Leitura
+# 📚 Reading Tracker
 
-App web para registrar livros lidos e livros que se quer ler. Feito como
-alvo de treino para automação de testes (Cypress / Playwright).
+Aplicação web para registrar livros lidos e livros que quero ler,
+acompanhada por uma estratégia de qualidade contínua.
 
-## Requisitos
+## 🎯 Sobre o projeto
+
+O **Reading Tracker** é uma aplicação full-stack desenvolvida para gerenciamento de leituras. A aplicação permite cadastrar livros, acompanhar seu status, realizar buscas e filtros, gerenciar capas e consultar estatísticas da biblioteca, como **quantidade total de livros, distribuição por gênero e total de páginas lidas**.
+
+A aplicação utiliza **React + Vite** no front-end, **Node.js + Express** na API e **SQLite** para persistência dos dados.
+
+O projeto possui uma **estratégia de qualidade integrada ao desenvolvimento**, contemplando testes funcionais, validação de regras de negócio, testes de API, validação de dados, automação E2E e integração contínua. Os artefatos de desenvolvimento e qualidade são mantidos no mesmo repositório, acompanhando a evolução da aplicação.
+
+## ✨ Funcionalidades
+
+- Login com usuário e senha fixos.
+- Cadastro de livros em dois status: **quero ler** e **lido**, com campos
+  condicionais (páginas, formato e datas de leitura só são obrigatórios
+  para livros já lidos).
+- Edição, exclusão (com modal de confirmação) e transição de "quero ler"
+  para "lido".
+- Filtros por status, gênero, formato e literatura, além de busca por
+  texto.
+- Ordenação da aba "lido" por data de fim da leitura (mais recente ou
+  mais antiga primeiro).
+- Upload, troca e remoção da capa do livro (opcional).
+- Página de estatísticas (totais, páginas lidas, contagens por gênero /
+  formato / literatura).
+
+Regras detalhadas (valores fixos, campos obrigatórios, etc.) estão na
+seção "Regras de negócio" mais abaixo.
+
+## 🧪 Estratégia de Qualidade
+
+A estratégia de qualidade do **Reading Tracker** contempla diferentes níveis de validação, acompanhando a evolução da aplicação desde os testes funcionais até a automação e integração contínua.
+
+1. **Testes funcionais e documentação de QA** — cenários de teste, critérios de validação, execução, evidências e registro de defeitos.
+
+2. **Testes de API e validação de dados** — validação de endpoints, autenticação, códigos HTTP, payloads, cenários positivos e negativos e conferência da persistência dos dados no banco.
+
+3. **Automação E2E** — automação dos principais fluxos da aplicação utilizando Cypress.
+
+4. **CI/CD** — execução automatizada dos testes em pipeline de integração contínua utilizando GitHub Actions.
+
+## 📊 Status do projeto
+
+| Área                                   | Status                  |
+| -------------------------------------- | ----------------------- |
+| Aplicação                              | ✅ Concluída             |
+| Testes funcionais e documentação de QA | 🟡 Em evolução          |
+| Testes de API e validação de dados     | ⚪ Planejado             |
+| Automação E2E com Cypress              | 🟡 Configuração inicial |
+| CI/CD com GitHub Actions               | ⚪ Planejado             |
+
+## 🛠️ Tecnologias
+
+### Aplicação
+
+| Tecnologia | Papel | Status |
+|---|---|---|
+| React 18 | Front-end (SPA) | ✅ Em uso |
+| React Router 6 | Roteamento no client | ✅ Em uso |
+| Vite 5 | Build e dev server do client | ✅ Em uso |
+| Express 4 | API REST | ✅ Em uso |
+| better-sqlite3 | Banco de dados (arquivo local) | ✅ Em uso |
+| multer | Upload de capas de livro | ✅ Em uso |
+| cors | Middleware CORS da API | ✅ Em uso |
+| Node.js 18+ | Runtime | ✅ Em uso |
+
+### Qualidade
+
+| Ferramenta | Papel | Status |
+|---|---|---|
+| Gherkin / BDD | Cenários de teste funcional | 🟡 Em andamento |
+| Cypress | Automação de testes end-to-end | 🟡 Configuração inicial |
+| Validação via SQL | Conferência de dados persistidos no SQLite | ⚪ Planejado |
+
+### DevOps
+
+| Ferramenta | Papel | Status |
+|---|---|---|
+| Git / GitHub | Versionamento e revisão (branches + PR) | ✅ Em uso |
+| GitHub Actions | Pipeline de CI/CD | ⚪ Planejado |
+
+## 📋 Requisitos
 
 - Node.js 18 ou superior
 
-## Instalação
+## 🚀 Como executar
 
 ```bash
 npm install
 ```
 
-Isso instala as dependências da raiz, do `client/` e do `server/` (npm workspaces).
-
-## Rodar em desenvolvimento
+Instala as dependências da raiz, do `client/` e do `server/` (npm
+workspaces).
 
 ```bash
 npm run dev
@@ -26,92 +104,58 @@ npm run dev
 
 Para rodar separadamente: `npm run dev:server` ou `npm run dev:client`.
 
-## Login
+## 🔐 Ambiente de testes
 
-- Usuário: `admin`
-- Senha: `admin123`
+- Usuário: `admin` / Senha: `admin123`.
+- O login devolve um token fixo (`token-de-teste-123`), enviado no header
+  `Authorization: Bearer` nas rotas que exigem autenticação.
+- Para partir de um estado conhecido antes de qualquer rodada de testes:
 
-O login devolve um token fixo (`token-de-teste-123`) que o front guarda no
-`localStorage` na chave `token` e envia no header `Authorization: Bearer`.
+  ```bash
+  npm run reset
+  # ou
+  curl -X POST http://localhost:3001/api/test/reset
+  ```
 
-## Resetar os dados de teste
+  Esse endpoint não exige autenticação, de propósito. Ele apaga todos os
+  livros e uploads e recria a lista fixa (8 livros: 5 lidos + 3 "quero
+  ler"), aplicando 3 capas de exemplo (versionadas em
+  `server/seed-assets/`) aos livros "A Garota no Trem", "1984" e "Torto
+  Arado".
 
-Apaga todos os livros e recria a lista fixa (5 lidos + 3 "quero ler"):
+## 📖 Regras de negócio
 
-```bash
-npm run reset
-# ou
-curl -X POST http://localhost:3001/api/test/reset
-```
+Status dos livros, campos obrigatórios e condicionais, valores fixos
+(gêneros, literatura, formato), regras da capa e das estatísticas:
+ver [`docs/requirements/business-rules.md`](docs/requirements/business-rules.md).
 
-Esse endpoint não exige autenticação, de propósito, para facilitar o uso
-em testes automatizados.
+## 🔗 API
 
-## API
+API REST em `/api`, autenticada por token fixo. Documentação completa de
+rotas, payloads, respostas e códigos HTTP:
+ver [`docs/api/endpoints.md`](docs/api/endpoints.md).
 
-Base: `/api`. Todas as rotas de livros e estatísticas exigem o header
-`Authorization: Bearer token-de-teste-123`.
+## 🧪 Documentação de QA
 
-| Método | Rota | Descrição |
-|---|---|---|
-| POST | `/api/login` | `{ username, password }` → `{ token }` |
-| GET | `/api/books` | lista; filtros: `?status=&genre=&format=&literature=&search=`; ordenação (só com `status=lido`): `&sort=fim_desc` ou `&sort=fim_asc` (padrão: título) |
-| GET | `/api/books/:id` | um livro |
-| POST | `/api/books` | cria |
-| PUT | `/api/books/:id` | edita / move "quero ler" → "lido" |
-| DELETE | `/api/books/:id` | exclui |
-| POST | `/api/books/:id/book-cover` | envia/troca a capa (`multipart/form-data`, campo `cover`; PNG/JPEG/WEBP, ≤ 2 MB) |
-| DELETE | `/api/books/:id/book-cover` | remove a capa |
-| GET | `/uploads/<arquivo>` | serve a imagem da capa (sem token) |
-| GET | `/api/stats` | totais e contagens |
-| POST | `/api/test/reset` | reseta os dados (sem token) |
+A estratégia de qualidade, os cenários de teste (Gherkin/BDD) e os
+registros de execução fazem parte deste mesmo repositório:
 
-Erros retornam JSON `{ "error": "..." }`; erros de validação incluem
-`{ "errors": [{ "field", "message" }] }`.
+- [`docs/qa/test-strategy.md`](docs/qa/test-strategy.md) — estratégia de qualidade.
+- [`docs/qa/test-cases.md`](docs/qa/test-cases.md) — cenários funcionais.
 
-## Valores fixos
-
-- **Gêneros:** Thriller Psicológico, Comédia Romântica, Distopia, Romance, Dark Romance, Suspense
-- **Literatura:** `estrangeira`, `brasileira`
-- **Formato:** `fisico`, `ebook`, `audiobook`
-- **Status:** `quero_ler`, `lido`
-
-Campos obrigatórios em "quero ler": título, autor, gênero, literatura.
-Em "lido": todos os anteriores + páginas, formato, data de início e data de fim.
-
-## Capas dos livros
-
-A capa é opcional. É enviada pelo formulário de livro ou pelo atalho no
-card (Adicionar / Trocar / Remover capa). Os arquivos ficam em
-`server/uploads/` (fora do git, criada em runtime) e são servidos em
-`/uploads/<arquivo>`. Formatos: PNG, JPEG, WEBP; máximo 2 MB.
-
-`POST /api/test/reset` esvazia `server/uploads/` e recria os 8 livros com
-3 capas de exemplo (livros "A Garota no Trem", "1984", "Torto Arado"),
-usando as imagens versionadas em `server/seed-assets/`.
-
-## Estrutura
+## 📁 Estrutura do projeto
 
 ```
-client/   front-end React + Vite
-server/   API Express + SQLite (arquivo server/data.sqlite, criado sozinho)
+client/    front-end React + Vite
+server/    API Express + SQLite (arquivo server/data.sqlite, criado sozinho)
+cypress/   configuração inicial da automação end-to-end (sem specs ainda)
+docs/
+  requirements/  regras de negócio
+  api/           documentação da API
+  qa/            estratégia de qualidade e casos de teste
+  superpowers/   documentação interna do processo de desenvolvimento
 ```
 
-## data-testid
+## 📄 Licença
 
-Todos os elementos interativos têm `data-testid` em português. Exemplos:
-`input-usuario`, `input-senha`, `botao-entrar`, `aba-lido`, `aba-quero-ler`,
-`botao-adicionar-livro`, `input-busca`, `select-genero`, `card-livro-<id>`,
-`botao-editar-<id>`, `botao-excluir-<id>`, `botao-marcar-lido-<id>`,
-`form-livro`, `input-titulo`, `botao-salvar-livro`, `modal-confirmacao`,
-`botao-confirmar-exclusao`, `stat-total-lidos`, `select-ordenacao`,
-`input-capa`, `preview-capa`, `botao-remover-capa`, `erro-capa`,
-`capa-livro-<id>`, `capa-placeholder-<id>`, `botao-adicionar-capa-<id>`,
-`botao-trocar-capa-<id>`.
-
-## Testes
-
-Este repositório **não inclui testes nem frameworks de teste** — eles são
-o exercício. Instale e configure Cypress ou Playwright separadamente e
-escreva os casos apontando para http://localhost:5173, usando
-`POST /api/test/reset` para deixar o estado conhecido antes de cada teste.
+Este projeto ainda não possui uma licença definida.
