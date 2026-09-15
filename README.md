@@ -32,25 +32,20 @@ seção "Regras de negócio" mais abaixo.
 
 ## 🧪 Estratégia de Qualidade
 
-A estratégia de qualidade do **Reading Tracker** contempla diferentes níveis de validação, acompanhando a evolução da aplicação desde os testes funcionais até a automação e integração contínua.
+A qualidade evolui em camadas, e cada uma cobre o que a anterior não
+alcança. Detalhes em [`docs/qa/`](docs/qa/README.md).
 
-1. **Testes funcionais e documentação de QA** — cenários de teste, critérios de validação, execução, evidências e registro de defeitos.
+| Camada | O que cobre | Status |
+|---|---|---|
+| Aplicação | Front-end, API e banco | ✅ Concluída |
+| 1. Testes funcionais manuais | 40 cenários em Gherkin, plano, execução, bugs e evidências | ✅ Ciclo 1 executado |
+| 2. Testes de API e dados | Endpoints, autenticação, códigos HTTP, payloads e conferência no banco | ⚪ Planejado |
+| 3. Automação E2E | Principais fluxos com Cypress, a partir dos cenários `@smoke` | 🟡 Configuração inicial |
+| 4. CI/CD | Testes automatizados no GitHub Actions a cada push/PR | ⚪ Planejado |
 
-2. **Testes de API e validação de dados** — validação de endpoints, autenticação, códigos HTTP, payloads, cenários positivos e negativos e conferência da persistência dos dados no banco.
-
-3. **Automação E2E** — automação dos principais fluxos da aplicação utilizando Cypress.
-
-4. **CI/CD** — execução automatizada dos testes em pipeline de integração contínua utilizando GitHub Actions.
-
-## 📊 Status do projeto
-
-| Área                                   | Status                  |
-| -------------------------------------- | ----------------------- |
-| Aplicação                              | ✅ Concluída             |
-| Testes funcionais e documentação de QA | 🟡 Em evolução          |
-| Testes de API e validação de dados     | ⚪ Planejado             |
-| Automação E2E com Cypress              | 🟡 Configuração inicial |
-| CI/CD com GitHub Actions               | ⚪ Planejado             |
+**Ciclo 1 em números:** 55 execuções · 90,9% aprovadas · 4 bugs (1
+crítico) · 5 melhorias · 3 riscos.
+[Ver relatório](docs/qa/execution-report.md)
 
 ## 🛠️ Tecnologias
 
@@ -71,7 +66,7 @@ A estratégia de qualidade do **Reading Tracker** contempla diferentes níveis d
 
 | Ferramenta | Papel | Status |
 |---|---|---|
-| Gherkin / BDD | Cenários de teste funcional | 🟡 Em andamento |
+| Gherkin / BDD | Cenários de teste funcional | ✅ Em uso |
 | Cypress | Automação de testes end-to-end | 🟡 Configuração inicial |
 | Validação via SQL | Conferência de dados persistidos no SQLite | ⚪ Planejado |
 
@@ -137,11 +132,14 @@ ver [`docs/api/endpoints.md`](docs/api/endpoints.md).
 
 ## 🧪 Documentação de QA
 
-A estratégia de qualidade, os cenários de teste (Gherkin/BDD) e os
-registros de execução fazem parte deste mesmo repositório:
+Comece pelo [`docs/qa/README.md`](docs/qa/README.md). Os documentos são:
 
-- [`docs/qa/test-strategy.md`](docs/qa/test-strategy.md) — estratégia de qualidade.
-- [`docs/qa/test-cases.md`](docs/qa/test-cases.md) — cenários funcionais.
+| Documento | Conteúdo |
+|---|---|
+| [`test-plan.md`](docs/qa/test-plan.md) | Escopo, análise de risco, critérios e rastreabilidade regra → caso → resultado |
+| [`test-cases.md`](docs/qa/test-cases.md) | 40 cenários em Gherkin/BDD |
+| [`execution-report.md`](docs/qa/execution-report.md) | Resultados do ciclo 1, sessões exploratórias, conclusão e lições aprendidas |
+| [`findings.md`](docs/qa/findings.md) | Bugs, melhorias e riscos |
 
 ## 📁 Estrutura do projeto
 
@@ -152,7 +150,7 @@ cypress/   configuração inicial da automação end-to-end (sem specs ainda)
 docs/
   requirements/  regras de negócio
   api/           documentação da API
-  qa/            estratégia de qualidade e casos de teste
+  qa/            plano, casos, relatório, achados e evidências de teste
   superpowers/   documentação interna do processo de desenvolvimento
 ```
 

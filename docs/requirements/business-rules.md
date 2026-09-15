@@ -58,10 +58,13 @@ Qualquer valor fora dessas listas é rejeitado na validação (400, com
 
 ## Busca e ordenação
 
-- A busca por texto (`?search=`) compara `title` e `author`, sem
-  diferenciar maiúsculas/minúsculas nem acentuação, e é feita em memória
-  (JavaScript), não via `LIKE` do SQLite — o `LOWER()` do SQLite não dobra
-  acentos.
+- A busca por texto (`?search=`) compara `title` e `author` de forma
+  **case-insensitive** (`"ADMIRÁVEL"` encontra `"admirável"`), feita em
+  memória (JavaScript) em vez de via `LIKE` do SQLite — o `LOWER()` do
+  SQLite só cobre ASCII e não lida corretamente com letras acentuadas.
+  **Limitação conhecida:** a busca **não ignora acentuação** — buscar
+  `"admiravel"` (sem acento) não encontra `"Admirável Mundo Novo"`. Só a
+  variação de maiúsculas/minúsculas é tratada, não a de acento.
 - A ordenação por data de fim de leitura (`?sort=fim_asc` / `?sort=fim_desc`)
   só tem efeito quando o filtro `status=lido` também está presente. Em
   qualquer outro caso (incluindo a aba "quero ler", que não tem datas), a
