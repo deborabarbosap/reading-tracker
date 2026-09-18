@@ -26,5 +26,8 @@ const colunasBooks = db.prepare("PRAGMA table_info(books)").all().map((c) => c.n
 if (!colunasBooks.includes("cover_file")) {
   db.exec("ALTER TABLE books ADD COLUMN cover_file TEXT");
 }
+if (!colunasBooks.includes("rating")) {
+  db.exec("ALTER TABLE books ADD COLUMN rating INTEGER");
+}
 
 module.exports = db;

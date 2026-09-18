@@ -124,7 +124,7 @@ export default function ListaLivros() {
         <div className="abas">
           <button
             type="button"
-            className={aba === "lido" ? "ativa" : ""}
+            className={`botao-aba ${aba === "lido" ? "ativa" : ""}`}
             onClick={() => setAba("lido")}
             data-testid="aba-lido"
           >
@@ -132,7 +132,7 @@ export default function ListaLivros() {
           </button>
           <button
             type="button"
-            className={aba === "quero_ler" ? "ativa" : ""}
+            className={`botao-aba ${aba === "quero_ler" ? "ativa" : ""}`}
             onClick={() => setAba("quero_ler")}
             data-testid="aba-quero-ler"
           >
@@ -142,7 +142,12 @@ export default function ListaLivros() {
 
         <div className="barra-acoes">
           <Filtros valores={filtros} aoAlterar={setFiltros} />
-          <button type="button" onClick={abrirNovo} data-testid="botao-adicionar-livro">
+          <button
+            type="button"
+            className="botao-primario"
+            onClick={abrirNovo}
+            data-testid="botao-adicionar-livro"
+          >
             Adicionar livro
           </button>
         </div>

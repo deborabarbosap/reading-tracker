@@ -7,12 +7,17 @@ export default function Filtros({ valores, aoAlterar }) {
 
   return (
     <div className="filtros" data-testid="filtros">
-      <input
-        placeholder="Buscar por título ou autor"
-        value={valores.search}
-        onChange={(e) => alterar("search", e.target.value)}
-        data-testid="input-busca"
-      />
+      <div className="campo-busca">
+        <span className="icone-busca" aria-hidden="true">
+          🔍
+        </span>
+        <input
+          placeholder="Buscar por título ou autor"
+          value={valores.search}
+          onChange={(e) => alterar("search", e.target.value)}
+          data-testid="input-busca"
+        />
+      </div>
       <select
         value={valores.genre}
         onChange={(e) => alterar("genre", e.target.value)}

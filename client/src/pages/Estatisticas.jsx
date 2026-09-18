@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Cabecalho from "../components/Cabecalho.jsx";
 import { obterEstatisticas } from "../api/stats.js";
 import { FORMATOS, LITERATURAS, rotulo } from "../config.js";
+
+const CORES_ESTANTE = [
+  "lombada-lavanda",
+  "lombada-rosa",
+  "lombada-azul",
+  "lombada-pessego",
+  "lombada-verde",
+];
+const ALTURAS_ESTANTE = [62, 82, 48, 70, 58, 90, 65, 76, 52, 68, 58];
 
 function Contagem({ titulo, dados, testid, formatarChave }) {
   const itens = Object.entries(dados || {});
@@ -38,7 +48,12 @@ export default function Estatisticas() {
     <div>
       <Cabecalho />
       <main className="conteudo">
-        <h1>Estatísticas</h1>
+        <div className="topo-pagina">
+          <h1>Estatísticas</h1>
+          <Link to="/" className="botao-pilula" data-testid="botao-voltar">
+            ← Voltar
+          </Link>
+        </div>
         {erro && (
           <p className="erro" data-testid="erro-estatisticas">
             {erro}
@@ -73,6 +88,20 @@ export default function Estatisticas() {
             />
           </div>
         )}
+
+        <div className="estante" aria-hidden="true">
+          {ALTURAS_ESTANTE.map((altura, indice) => (
+            <span
+              key={indice}
+              className={`lombada ${CORES_ESTANTE[indice % CORES_ESTANTE.length]}`}
+              style={{ height: `${altura}px` }}
+            >
+              {(indice === 0 || indice === ALTURAS_ESTANTE.length - 1) && (
+                <span className="lombada-brilho">✦</span>
+              )}
+            </span>
+          ))}
+        </div>
       </main>
     </div>
   );

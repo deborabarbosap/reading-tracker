@@ -23,6 +23,7 @@ function validateBook(input) {
     format: null,
     start_date: null,
     end_date: null,
+    rating: null,
   };
 
   if (!STATUSES.includes(data.status)) {
@@ -81,6 +82,15 @@ function validateBook(input) {
     }
     if (inicio && fim && fim < inicio) {
       errors.push({ field: "end_date", message: "A data de fim não pode ser anterior à data de início" });
+    }
+
+    if (data.rating !== undefined && data.rating !== null && data.rating !== "") {
+      const rating = Number(data.rating);
+      if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+        errors.push({ field: "rating", message: "A avaliação deve ser de 1 a 5 estrelas" });
+      } else {
+        value.rating = rating;
+      }
     }
   }
 

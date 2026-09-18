@@ -10,12 +10,12 @@ function serializeBook(row) {
 
 const COLUNAS = `
   status, title, author, genre, literature,
-  pages, format, start_date, end_date,
+  pages, format, start_date, end_date, rating,
   created_at, updated_at
 `;
 const PLACEHOLDERS = `
   @status, @title, @author, @genre, @literature,
-  @pages, @format, @start_date, @end_date,
+  @pages, @format, @start_date, @end_date, @rating,
   @created_at, @updated_at
 `;
 
@@ -84,6 +84,7 @@ function linhaCompleta(value, timestamps) {
     format: value.format ?? null,
     start_date: value.start_date ?? null,
     end_date: value.end_date ?? null,
+    rating: value.rating ?? null,
     created_at: timestamps.created_at,
     updated_at: timestamps.updated_at,
   };
@@ -105,7 +106,8 @@ function updateBook(id, value) {
     UPDATE books SET
       status = @status, title = @title, author = @author, genre = @genre,
       literature = @literature, pages = @pages, format = @format,
-      start_date = @start_date, end_date = @end_date, updated_at = @updated_at
+      start_date = @start_date, end_date = @end_date, rating = @rating,
+      updated_at = @updated_at
     WHERE id = @id
   `).run({
     ...linhaCompleta(value, { created_at: existente.created_at, updated_at: agora }),
