@@ -46,33 +46,66 @@ export default function CardLivro({ livro, aoEditar, aoExcluir, aoMarcarLido, ao
     <article className="card-livro" data-testid={`card-livro-${livro.id}`}>
       <div className="card-livro-conteudo">
         <div className="card-livro-dados">
-          <h3>{livro.title}</h3>
-          <p className="autor">{livro.author}</p>
-          <ul className="detalhes">
-            <li>Gênero: {livro.genre}</li>
-            <li>Literatura: {rotulo(LITERATURAS, livro.literature)}</li>
+          <h3>
+            <span className="marcador" aria-hidden="true">
+              ◈
+            </span>{" "}
+            {livro.title}
+          </h3>
+          <p className="autor">
+            <span aria-hidden="true">✎</span> {livro.author}
+          </p>
+          <div className="badges">
+            <span className="badge badge-genero">
+              <span aria-hidden="true">★</span> {livro.genre}
+            </span>
+            <span className="badge badge-literatura">
+              <span aria-hidden="true">📚</span> {rotulo(LITERATURAS, livro.literature)}
+            </span>
             {livro.status === "lido" && (
               <>
-                <li>Páginas: {livro.pages}</li>
-                <li>Formato: {rotulo(FORMATOS, livro.format)}</li>
-                <li>
-                  Leitura: {formatarData(livro.start_date)} até {formatarData(livro.end_date)}
-                </li>
+                <span className="badge badge-paginas">
+                  <span aria-hidden="true">📖</span> {livro.pages} páginas
+                </span>
+                <span className="badge badge-formato">
+                  <span aria-hidden="true">🔖</span> {rotulo(FORMATOS, livro.format)}
+                </span>
               </>
             )}
-          </ul>
+          </div>
+          {livro.status === "lido" && (
+            <p className="periodo-leitura">
+              <span aria-hidden="true">📅</span> Leitura: {formatarData(livro.start_date)} até{" "}
+              {formatarData(livro.end_date)}
+            </p>
+          )}
         </div>
-        <div className="card-livro-capa">
-          {livro.cover_url ? (
-            <img
-              src={livro.cover_url}
-              alt={`Capa de ${livro.title}`}
-              data-testid={`capa-livro-${livro.id}`}
-            />
-          ) : (
-            <div className="capa-placeholder" data-testid={`capa-placeholder-${livro.id}`}>
-              Sem capa
-            </div>
+        <div className="card-livro-capa-coluna">
+          <div className="card-livro-capa">
+            {livro.cover_url ? (
+              <img
+                src={livro.cover_url}
+                alt={`Capa de ${livro.title}`}
+                data-testid={`capa-livro-${livro.id}`}
+              />
+            ) : (
+              <div className="capa-placeholder" data-testid={`capa-placeholder-${livro.id}`}>
+                <span className="capa-clipe" aria-hidden="true">
+                  📎
+                </span>
+                Sem capa
+              </div>
+            )}
+          </div>
+          {livro.status === "lido" && livro.rating > 0 && (
+            <p
+              className="avaliacao-livro"
+              data-testid={`avaliacao-${livro.id}`}
+              aria-hidden="true"
+            >
+              {"★".repeat(livro.rating)}
+              {"☆".repeat(5 - livro.rating)}
+            </p>
           )}
         </div>
       </div>

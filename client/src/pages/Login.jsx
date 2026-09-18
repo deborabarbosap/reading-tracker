@@ -28,7 +28,9 @@ export default function Login() {
   return (
     <main className="tela-login">
       <form className="cartao" onSubmit={aoEnviar} data-testid="form-login">
-        <h1>Rastreador de Leitura</h1>
+        <h1>
+          Rastreador de <span className="logo-destaque">Leitura</span>
+        </h1>
         <label>
           Usuário
           <input
@@ -53,7 +55,12 @@ export default function Login() {
             {erro}
           </p>
         )}
-        <button type="submit" data-testid="botao-entrar" disabled={enviando}>
+        <button
+          type="submit"
+          className="botao-primario"
+          data-testid="botao-entrar"
+          disabled={enviando}
+        >
           {enviando ? "Entrando..." : "Entrar"}
         </button>
       </form>
